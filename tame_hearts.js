@@ -1,4 +1,7 @@
 import Card from './Card.js'
+import Game from './Game.js'
+
+const PLAYERS = 4
 
 function createDeck() {
   const deck = []
@@ -23,4 +26,21 @@ function shuffle(deck) {
   return deck
 }
 
-console.log(shuffle(createDeck()))
+function playGame() {
+  const game = new Game(PLAYERS)
+
+  // Do Rounds
+  for (; game.round <= 10; game.round++) {
+    // DEAL
+    const deck = shuffle(createDeck())
+
+    const numCardsPerPlayer = 11 - game.round
+    for (let player of game.players) {
+      for (let i = 0; i < numCardsPerPlayer; i++) {
+        player.hand.push(deck.pop())
+      }
+    }    
+  }
+}
+
+playGame()
