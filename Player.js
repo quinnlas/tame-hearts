@@ -4,6 +4,17 @@ export default class Player {
   bid = 0
   tricksTaken = 0
 
-  aiGetBid() { return 1 }
-  aiPlayCard() { return this.hand.pop }
+  constructor(name) {
+    this.name = name
+  }
+
+  aiGetBid() {
+    // TODO AI™
+    return 1
+  }
+  aiPlayCard() {
+    // TODO legal moves
+    // TODO AI™
+    return this.hand.pop
+  }
 }
