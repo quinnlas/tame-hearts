@@ -1,0 +1,12 @@
+{
+  "name": "tame-hearts",
+  "version": "1.0.0",
+  "description": "The game is played in 10 rounds, with smaller hands each round. It is a trick taking game similar to normal hearts (which will be referred to as mean hearts here). Players estimate how many tricks they will take at the start of a round. Points are given based on the difference between actual and estimated tricks taken. Points increase each round. The player with the fewest points after the final round wins.",
+  "main": "Card.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "type": "module"
+}
