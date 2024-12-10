@@ -10,7 +10,7 @@ export default class Game {
 
   constructor(numPlayers) {
     for (let i = 0; i < numPlayers; i++) {
-      this.players.push(new Player(`Player ${i + 1}`))
+      this.players.push(new Player(`Player ${i + 1}`, true))
     }
   }
 }

@@ -1,5 +1,6 @@
 import Card from './Card.js'
 import Game from './Game.js'
+import _ from 'lodash'
 
 const PLAYERS = 4
 
@@ -26,10 +27,23 @@ function shuffle(deck) {
   return deck
 }
 
+function getIndexOfHighestOfSuit(cards, suit) {
+  return _(cards)
+    .toPairs()
+    .filter(p => p[1].suit === suit)
+    .maxBy(p => p[1].getNumericalValue())[0]
+}
+
 // assume that the lead is at index 0
 function determineTrickTakerIndex(playedCards) {
-  // TODO logic
-  return 1
+  // if any hearts, choose the highest one
+  if (playedCards.some(c => c.suit === '♥')) {
+    return getIndexOfHighestOfSuit(playedCards, '♥')
+  }
+
+  // otherwise, it's the highest of the lead suit
+  const leadSuit = playedCards[0].suit
+  return getIndexOfHighestOfSuit(playedCards, leadSuit)
 }
 
 function playGame() {
@@ -50,7 +64,7 @@ function playGame() {
     // BIDDING
     for (let player of game.players) {
       // TODO correct order based on dealer
-      player.bid = player.aiGetBid()
+      player.bid = player.getBid()
       player.tricksTaken = 0
     }
 
@@ -64,7 +78,7 @@ function playGame() {
       for (let playerOrderIndex = 0; playerOrderIndex < PLAYERS; playerOrderIndex++) {
         const playerWithTurn = game.players[(game.leadIndex + playerOrderIndex) % PLAYERS]
         
-        playedCards.push(playerWithTurn.aiPlayCard())
+        playedCards.push(playerWithTurn.playCard())
       }
 
       // DETERMINE TRICK TAKER
