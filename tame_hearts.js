@@ -74,12 +74,12 @@ function playGame() {
     logGame()
     
     // BIDDING
-    for (let player of game.players) {
-      // TODO correct order based on dealer
-      player.bid = player.getBid()
-      logGame(`${player.name} bids ${player.bid}.`)
+    for (let bidOrderIndex = 0; bidOrderIndex < PLAYERS; bidOrderIndex++) {
+      const playerWithBid = game.players[(game.leadIndex + bidOrderIndex) % PLAYERS]
+      playerWithBid.bid = playerWithBid.getBid()
+      logGame(`${playerWithBid.name} bids ${playerWithBid.bid}.`)
 
-      player.tricksTaken = 0
+      playerWithBid.tricksTaken = 0
     }
 
     // PLAYING
@@ -125,6 +125,7 @@ function playGame() {
     logGame()
 
     game.dealerIndex = (game.dealerIndex + 1) % PLAYERS
+    game.leadIndex = (game.dealerIndex + 1) % PLAYERS
 
   }
 
