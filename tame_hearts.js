@@ -95,7 +95,8 @@ function playGame() {
 
       for (let playerOrderIndex = 0; playerOrderIndex < PLAYERS; playerOrderIndex++) {
         const playerWithTurn = game.players[(game.leadIndex + playerOrderIndex) % PLAYERS]
-        const playedCard = playerWithTurn.playCard()
+        const playedCard = playerWithTurn.playCard(playedCards, game.heartsBroken)
+        if (playedCard.suit === '♥') game.heartsBroken = true
         logGame(`${playerWithTurn.name} plays ${playedCard.number}${playedCard.suit}.`)
         
         playedCards.push(playedCard)
