@@ -3,6 +3,7 @@ import Game from './Game.js'
 import _ from 'lodash'
 
 const PLAYERS = 4
+const LOG_GAME = true
 
 function createDeck() {
   const deck = []
@@ -28,10 +29,11 @@ function shuffle(deck) {
 }
 
 function getIndexOfHighestOfSuit(cards, suit) {
-  return _(cards)
+  const indexStr = _(cards)
     .toPairs()
     .filter(p => p[1].suit === suit)
     .maxBy(p => p[1].getNumericalValue())[0]
+  return Number(indexStr)
 }
 
 // assume that the lead is at index 0
@@ -46,11 +48,17 @@ function determineTrickTakerIndex(playedCards) {
   return getIndexOfHighestOfSuit(playedCards, leadSuit)
 }
 
+function logGame(...data) {
+  if (LOG_GAME) console.log(...data)
+}
+
 function playGame() {
   const game = new Game(PLAYERS)
 
   // Do Rounds
   for (; game.round <= 10; game.round++) {
+    logGame(`ROUND ${game.round}`)
+
     // DEAL
     const deck = shuffle(createDeck())
 
@@ -60,42 +68,64 @@ function playGame() {
         player.hand.push(deck.pop())
       }
     }
+
+    logGame()
+    logGame(`Dealer is ${game.players[game.dealerIndex].name}.`)
+    logGame()
     
     // BIDDING
     for (let player of game.players) {
       // TODO correct order based on dealer
       player.bid = player.getBid()
+      logGame(`${player.name} bids ${player.bid}.`)
+
       player.tricksTaken = 0
     }
 
     // PLAYING
     game.heartsBroken = false
 
+    logGame()
+
     for (let trickIndex = 0; trickIndex < numCardsPerPlayer; trickIndex++) {
       // PLAY TRICK CARDS
       const playedCards = []
 
+      logGame(`${game.players[game.leadIndex].name} leads.`)
+
       for (let playerOrderIndex = 0; playerOrderIndex < PLAYERS; playerOrderIndex++) {
         const playerWithTurn = game.players[(game.leadIndex + playerOrderIndex) % PLAYERS]
+        const playedCard = playerWithTurn.playCard()
+        logGame(`${playerWithTurn.name} plays ${playedCard.number}${playedCard.suit}.`)
         
-        playedCards.push(playerWithTurn.playCard())
+        playedCards.push(playedCard)
       }
 
       // DETERMINE TRICK TAKER
       const trickTakerOrderIndex = determineTrickTakerIndex(playedCards)
       const trickTakerPlayerIndex = (game.leadIndex + trickTakerOrderIndex) % PLAYERS
 
-      game.players[trickTakerPlayerIndex].tricksTaken++
+      const trickTaker = game.players[trickTakerPlayerIndex]
+      trickTaker.tricksTaken++
+
+      logGame(`${trickTaker.name} takes the trick and has ${trickTaker.tricksTaken}.`)
+      logGame()
+
       game.leadIndex = trickTakerPlayerIndex
     }
+
+    logGame(`Scores:`)
 
     // SCORING
     const roundBaseScore = game.round * 10
     for (let player of game.players) {
       player.score += Math.abs(player.tricksTaken - player.bid) * roundBaseScore
+      logGame(`${player.name}: ${player.bid}/${player.tricksTaken} ${player.score}`)
     }
+    logGame()
 
-    console.log(game)
+    game.dealerIndex = (game.dealerIndex + 1) % PLAYERS
+
   }
 
   const winningScore = Math.min(...game.players.map(p => p.score))
